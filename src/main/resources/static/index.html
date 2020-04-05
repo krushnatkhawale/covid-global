@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Covid global</title>
+</head>
+<body>
+<main>
+    <table>
+        <thead>
+        <tr>
+            <th>P</th>
+            <th>C</th>
+            <th>Lt</th>
+            <th>Lg</th>
+            <th>D</th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+
+        </tbody>
+    </table>
+</main>
+<script type="text/javascript">
+
+   function processResponse(response){
+        console.log(response);
+        $.each( response, function(i, rec){
+            var tr = $('<tr>').append(
+                $('<td>').text(rec.province),
+                $('<td>').text(rec.country),
+                $('<td>').text(rec.lat),
+                $('<td>').text(rec.lng)
+            );
+            // #
+            $('#tableBody').append(tr);
+        });
+   }
+
+   fetch('http://localhost:8080/byCountry')
+     .then(response => Promise.resolve(response.json()).then(response => processResponse(response)));
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</body>
+</html>
