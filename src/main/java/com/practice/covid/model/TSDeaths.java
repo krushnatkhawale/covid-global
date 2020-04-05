@@ -1,28 +1,28 @@
 package com.practice.covid.model;
 
-import java.util.List;
+import java.util.Map;
 
 public class TSDeaths {
     private String province;
     private String country;
     private String lat;
     private String lng;
-    private List<Integer> counts;
+    private Map<String, Integer> datedCounts;
 
-    public TSDeaths(String province, String country, String lat, String lng, List<Integer> counts) {
+    public TSDeaths(String province, String country, String lat, String lng, Map<String, Integer> datedCounts) {
         this.province = province;
         this.country = country;
         this.lat = lat;
         this.lng = lng;
-        this.counts = counts;
+        this.datedCounts = datedCounts;
     }
 
-    public List<Integer> getCounts() {
-        return counts;
+    public Map<String, Integer> getCounts() {
+        return datedCounts;
     }
 
-    public void setCounts(List<Integer> counts) {
-        this.counts = counts;
+    public void setCounts(Map<String, Integer> counts) {
+        this.datedCounts = counts;
     }
 
     public String getProvince() {
@@ -64,7 +64,7 @@ public class TSDeaths {
                 ", country='" + country + '\'' +
                 ", lat='" + lat + '\'' +
                 ", lng='" + lng + '\'' +
-                ", counts=" + counts +
+                ", datedCounts=" + datedCounts +
                 '}';
     }
 }

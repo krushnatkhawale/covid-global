@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Covid global</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style type="text/css">
+        #map{
+            width: 80%;
+            min-width: 400px;
+            min-height: 350px;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div id='map'></div>
+    <script>
+mapboxgl.accessToken = 'pk.eyJ1Ijoia3J1c2huYXQiLCJhIjoiY2s4bmtic2NoMGNtMDNucDNoM3IxeGh5ayJ9.skTlGafrqBCrwT2sXolWGw';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/streets-v11'
+});
+</script>
+</main>
+<script type="text/javascript">
+
+   var url = "http://localhost:8080/byCountry";
+
+Plotly.d3.json(url, (err, raw) => {
+  console.log(raw);
+  var lat = raw.map(rc => rc.lat);
+  //console.log(lat);
+  var lon = raw.map(rc => rc.lng);
+  //console.log(lon);
+  var today = new Date();
+  var dd = today.getDate()-2
+  var mm = today.getMonth()+1;
+  var yy = today.getYear()-100
+  today = mm+'/'+dd+'/'+yy;
+  var zzzz = raw.map(rc => rc.counts)
+  zzzz = zzzz.map( zzz => zzz  );
+  var zzz = zzzz.map( zzz => zzz[today] )
+  console.log(zzz);
+  var data = [
+    { type: "scattermapbox", lon: lon, lat: lat, z: zzz, hoverinfo: "y" }
+  ];
+
+  var layout = {
+    mapbox: { style: "dark", zoom: 1, center: { lon: -150, lat: 60 } }
+
+  };
+
+  var config = {
+    mapboxAccessToken: mapboxgl.accessToken
+  };
+
+  Plotly.newPlot('map', data, layout, config);
+});
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</body>
+</html>

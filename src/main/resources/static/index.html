@@ -37,10 +37,14 @@
         });
    }
 
-   fetch('http://localhost:8080/byCountry')
-     .then(response => Promise.resolve(response.json()).then(response => processResponse(response)));
+   fetch('http://localhost:8080/byCountry/india')
+     .then(
+        response => Promise.resolve(response.json()).then(response => processResponse(response))
+     );
 
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </body>
 </html>

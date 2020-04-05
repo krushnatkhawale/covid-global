@@ -1,7 +1,6 @@
 package com.practice.covid.service;
 
 import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 import com.practice.covid.model.TSDeaths;
 import com.practice.covid.util.GitUtils;
 import com.practice.covid.util.Utils;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,16 +32,18 @@ public class CovidDataFetchService {
                 File reqFiles = getDataFiles(git);
                 System.out.println("Reading file: " + reqFiles.getName());
 
-
-                List<TSDeaths> dataRows;
+                List<TSDeaths> dataRows = new ArrayList<>();
                 try (
                         Reader reader = Files.newBufferedReader(reqFiles.toPath());
-                        CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+                        CSVReader csvReader = new CSVReader(reader);
                 ) {
-
-                    dataRows = csvReader.readAll().stream().map(Utils::lineToPojo).collect(Collectors.toList());
+                    String[] headers = csvReader.readNext();
+                    String[] row;
+                    while ((row = csvReader.readNext()) != null) {
+                        TSDeaths tsDeaths = Utils.lineToPojo(headers, row);
+                        dataRows.add(tsDeaths);
+                    }
                 }
-
                 return dataRows;
             }
         } catch (Exception e) {
@@ -59,5 +61,12 @@ public class CovidDataFetchService {
         File[] firstChildFiles = firstChild.listFiles(file -> file.getName().equals(secondChild));
         File secondChild = firstChildFiles[0];
         return secondChild.listFiles()[4];
+    }
+
+    public List<TSDeaths> getCovidData(String name) {
+        return getCovidData()
+                .stream()
+                .filter(record -> record.getCountry().equalsIgnoreCase(name))
+                .collect(Collectors.toList());
     }
 }
