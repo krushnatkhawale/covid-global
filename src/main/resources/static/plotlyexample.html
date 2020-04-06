@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <title>Covid global</title>
     <script src='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet'/>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style type="text/css">
         #map{
-            width: 80%;
+            width: 90%;
             min-width: 400px;
-            min-height: 350px;
+            min-height: 550px;
         }
+
     </style>
 </head>
 <body>
@@ -23,42 +24,50 @@ var map = new mapboxgl.Map({
 container: 'map',
 style: 'mapbox://styles/mapbox/streets-v11'
 });
-</script>
+
+    </script>
 </main>
 <script type="text/javascript">
 
    var url = "http://localhost:8080/byCountry";
 
 Plotly.d3.json(url, (err, raw) => {
-  console.log(raw);
-  var lat = raw.map(rc => rc.lat);
-  //console.log(lat);
-  var lon = raw.map(rc => rc.lng);
-  //console.log(lon);
+
   var today = new Date();
-  var dd = today.getDate()-2
-  var mm = today.getMonth()+1;
-  var yy = today.getYear()-100
-  today = mm+'/'+dd+'/'+yy;
+  today = (today.getDate()-2) +'/'+ (today.getMonth()+1) +'/'+ (today.getYear()-100);
+
+  var countries = raw.map(rc => rc.country);
+
+  var lat = raw.map(rc => rc.lat);
+  var lon = raw.map(rc => rc.lng);
   var zzzz = raw.map(rc => rc.counts)
   zzzz = zzzz.map( zzz => zzz  );
   var zzz = zzzz.map( zzz => zzz[today] )
-  console.log(zzz);
+  var maxCount = Math.max(...zzz);
+  var markerSizes1 = zzz.map( zz => (zz / maxCount ) *12  )
+  var markerSizes2 = markerSizes1.map( mS1 => Math.ceil(mS1) );
   var data = [
     {
         type: "scattermapbox",
         lon: lon,
         lat: lat,
         z: zzz,
-        hoverinfo: "y",
-        mode: 'markers'
-
+        hoverinfo: "x",
+        hovertext: countries,
+        mode: 'markers',
+        marker: {
+		    	 'size': markerSizes2,
+		    	 'color': zzz,
+		    	 'sizeref': 0.1,
+		    	 'sizemin': 1,
+		    	 'sizemode': 'diameter',
+		}
     }
   ];
 
   var layout = {
     autosize: true,
-    mapbox: { style: "dark", zoom: 2, center: { lon: 78.0, lat: 21 } },
+    mapbox: { style: "dark", zoom: 1, center: { lon: 53.0, lat: 32 } },
     margin: { t: 0, b: 0 }
   };
 
@@ -68,6 +77,7 @@ Plotly.d3.json(url, (err, raw) => {
 
   Plotly.newPlot('map', data, layout, config);
 });
+
 
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
